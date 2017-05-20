@@ -41,7 +41,7 @@ public class Sorter {
 
     for (int i = 0; i < r; i++) {
       int currsize = 0;
-      int maxsize = (int) B;
+      int maxsize = 32; // FIXME (int) B;
       int init = 0;
       List<String> slist = new ArrayList<String>();
       
@@ -58,7 +58,7 @@ public class Sorter {
           currsize += 1 + slist.get(k).length();
           k++;
         }
-        handler.write(slist.subList(init, k+1), root + RUNSUFIX, j); //TODO falta
+        handler.write(slist.subList(init, k+1), root + RUNSUFIX + j, k);
         init = k+1;
         j++;
       }

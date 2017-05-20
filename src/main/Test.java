@@ -1,26 +1,55 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Random;
 
 public class Test {
-  public static void main(String[] args) {
-    /*
-    double a = 3.5e-2;
-    String b = "0.035";
-    System.out.println((byte) a);
-    System.out.println(Byte.valueOf(b));
-    */
+  public static void main(String[] args) throws IOException {
+    Random rnd = new Random();
+    String root = "input";
+    String ext = ".txt";
+    int n = 20;
     
-    int n = 10;
-    List<String> slist = new ArrayList<String>();
+    int x0, y0, x1, y1;
+    String str;
+    
     for (int i = 0; i < n; i++) {
-      slist.add(String.format("(%d,%d,%d,%d)",i,i+1,i+1,i+2));
+      System.out.println("Processing " + i);
+      FileWriter fw = new FileWriter(root+i+ext);
+      BufferedWriter bw = new BufferedWriter(fw);
+      
+      x0 = rnd.nextInt(10);
+      y0 = rnd.nextInt(10);
+      x1 = rnd.nextInt(10);
+      y1 = rnd.nextInt(10);
+      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
+      bw.write(str);
+      
+      bw.write(",");
+      
+      x0 = rnd.nextInt(10);
+      y0 = rnd.nextInt(10);
+      x1 = rnd.nextInt(10);
+      y1 = rnd.nextInt(10);
+      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
+      bw.write(str);
+      
+      bw.write(",");
+      
+      x0 = rnd.nextInt(10);
+      y0 = rnd.nextInt(10);
+      x1 = rnd.nextInt(10);
+      y1 = rnd.nextInt(10);
+      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
+      bw.write(str);
+      
+      bw.close();
+      fw.close();
     }
-    IOHandler handler = new IOHandler();
-    handler.write(slist, "test", 0);
+    Sorter st = new Sorter(root, 60, 'x');
+    st.mergeSort();
     System.out.println("Done!");
-    
-    
   }
 }

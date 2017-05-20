@@ -6,26 +6,27 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IOHandler {
   private final String EXT = ".txt";
-  private final String SEP = ",";
+  private final String SEP = "_";
+  private final String DIV = ",";
   
-  // TODO Arreglar read para soportar formato s,s,s....
   public void write(List<String> slist, String root, int index) {
     FileWriter fw = null;
     BufferedWriter bw = null;
-    String filename = root + "_" + index + EXT;
+    String filename = root + SEP + index + EXT;
     String content = "";
     
     try {
       fw = new FileWriter(filename);
       bw = new BufferedWriter(fw);
       for (String s: slist) {
-        content += SEP + s;
+        content += DIV + s;
       }
-      content = content.substring(SEP.length());
+      content = content.substring(1);
       bw.write(content);
     } catch (IOException e){
       e.printStackTrace();
@@ -47,15 +48,19 @@ public class IOHandler {
     List<String> ans = new ArrayList<String>();
     FileReader fr = null;
     BufferedReader br = null;
-    String filename = root + index + EXT;
-    String currentline;
+    String filename = root + SEP + index + EXT;
     
     try {
       fr = new FileReader(filename);
       br = new BufferedReader(fr);
-      while ((currentline = br.readLine()) != null) {
-        ans.add(currentline);
+      ans = Arrays.asList(br.readLine().split(",\\("));
+      for (int i = 1; i < ans.size(); i++) {
+        ans.set(i, "(" + ans.get(i));
       }
+      for (String s: ans) {
+        System.out.println(s);
+      }
+      
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
