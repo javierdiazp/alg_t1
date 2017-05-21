@@ -8,7 +8,6 @@ import java.util.List;
 
 public class IOHandler {
   private final String SEP = "_";
-  private final String RUN = "run";
   
   public void write(List<Segment> slist, String root, int index) {
     RandomAccessFile file = null;
@@ -80,8 +79,8 @@ public class IOHandler {
     return ans;
   }
   
-  public void multipleWrite(List<Segment> slist, String root, int index, long B) {
-    long currsize = 0;
+  public void multipleWrite(List<Segment> slist, String root, int index, int B) {
+    int currsize = 0;
     int init = 0;
     int j = 0;
     int k = 0;
@@ -91,7 +90,7 @@ public class IOHandler {
         currsize++;
         k++;
       }
-      write(slist.subList(init, k), root + SEP + RUN + index, j);
+      write(slist.subList(init, k), root + SEP + index, j);
       init = k;
       currsize = 0;
       j++;

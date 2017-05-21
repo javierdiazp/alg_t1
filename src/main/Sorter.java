@@ -5,17 +5,20 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Sorter {
-  private final long B = 4096/Segment.SIZE;
-  private final long M = Runtime.getRuntime().maxMemory()/Segment.SIZE;
-  private final int m = (int) (M/B);
+  private final int B = 4096/Segment.SIZE;
+  private final int M = (int) (Runtime.getRuntime().maxMemory()/Segment.SIZE);
+  private final int m = (int) (0.6*(M/B)); // use 60% of RAM to store elements
 
   private int n;
   private String root;
   private Comparator<Segment> cmp;
   
-  public Sorter(String root, long N, char sortBy) {
+  public Sorter(String root, int N, char sortBy) {
     this.root = root;
     this.n = (int) Math.ceil((1.0*N/B));
+    System.out.println("MaxMemory: " + Runtime.getRuntime().maxMemory());
+    System.out.println("M: " + M);
+    System.out.println("m: " + m);
     
     switch (sortBy){
       case ('x'):
@@ -32,6 +35,7 @@ public class Sorter {
   }
   
   public void mergeSort() {
+    /* Part 1: Create runs */
     int r = (int) Math.ceil(1.0*n/m);
     IOHandler handler = new IOHandler();
 
@@ -42,8 +46,25 @@ public class Sorter {
         slist.addAll(handler.read(root, j));
       }
       slist.sort(cmp);
-      handler.multipleWrite(slist, root, i, B);
+      handler.multipleWrite(slist, root + "_run0", i, B);
     }
+    
+    /* Part 2: Merge */
+    int i = 0;
+    String sep = "_";
+    String path;
+    do {
+      List<List<Segment>> buffer = new ArrayList<List<Segment>>();
+      for (int j = 0; j < r; j++) {
+        path = root + sep + "run" + i + sep + j;
+        buffer.add(handler.read(path, 0));
+      }
+      while (M == 0) { // FIXME
+        // do something
+      }
+      // actualizo r
+      i++;
+    } while (r > m);
   }
   
   private final Comparator<Segment> cmpx = new Comparator<Segment>() {

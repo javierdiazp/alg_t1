@@ -12,13 +12,13 @@ public class Test {
   //@SuppressWarnings("unused")
   private static void testMergeSort() {
     // create input
-    int N = (int) Math.pow(2, 14);
-    long B = 4096/Segment.SIZE;
+    int N = (int) Math.pow(2, 8);
+    int B = 4096/Segment.SIZE;
     String root = "test";
     IOHandler handler = new IOHandler();
     
     int i = 0, j = 0;
-    long currsize = 0;
+    int currsize = 0;
     while (i < N) {
       List<Segment> slist = new ArrayList<Segment>();
       while (currsize < B && i < N) {

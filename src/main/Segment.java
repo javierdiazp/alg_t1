@@ -1,7 +1,7 @@
 package main;
 
 public class Segment {
-  public static final long SIZE = 28;
+  public static final int SIZE = 28;
   
   private float x0;
   private float y0;
