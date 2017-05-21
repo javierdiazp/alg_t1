@@ -5,21 +5,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Sorter {
-  private final long B = 4096;
-  private final long M = Runtime.getRuntime().maxMemory();
+  private final long B = 4096/Segment.SIZE;
+  private final long M = Runtime.getRuntime().maxMemory()/Segment.SIZE;
   private final int m = (int) (M/B);
-  private final String RUNSUFIX = "_run";
-  
-  @SuppressWarnings("unused") //FIXME
-  private long N;
+
   private int n;
   private String root;
-  private Comparator<String> cmp;
+  private Comparator<Segment> cmp;
   
   public Sorter(String root, long N, char sortBy) {
     this.root = root;
-    this.N = N;
-    this.n = (int) (N/B);
+    this.n = (int) Math.ceil((1.0*N/B));
     
     switch (sortBy){
       case ('x'):
@@ -36,45 +32,30 @@ public class Sorter {
   }
   
   public void mergeSort() {
-    int r = n/m;
+    int r = (int) Math.ceil(1.0*n/m);
     IOHandler handler = new IOHandler();
 
     for (int i = 0; i < r; i++) {
-      int currsize = 0;
-      int maxsize = 32; // FIXME (int) B;
-      int init = 0;
-      List<String> slist = new ArrayList<String>();
+      List<Segment> slist = new ArrayList<Segment>();
       
-      for (int j = i*m; j < (i+1)*m; j++) {
+      for (int j = i*m; j < Math.min((i+1)*m, n); j++) {
         slist.addAll(handler.read(root, j));
       }
-      
       slist.sort(cmp);
-      
-      int j = 0;
-      int k = 0;
-      while (k < slist.size()) {
-        while (currsize < maxsize && k < slist.size()) {
-          currsize += 1 + slist.get(k).length();
-          k++;
-        }
-        handler.write(slist.subList(init, k+1), root + RUNSUFIX + j, k);
-        init = k+1;
-        j++;
-      }
+      handler.multipleWrite(slist, root, i, B);
     }
   }
   
-  private final Comparator<String> cmpx = new Comparator<String>() {
+  private final Comparator<Segment> cmpx = new Comparator<Segment>() {
     @Override
-    public int compare(String s0, String s1) {
+    public int compare(Segment s0, Segment s1) {
       return 0; // TODO
     }
   };
   
-  private final Comparator<String> cmpy = new Comparator<String>() {
+  private final Comparator<Segment> cmpy = new Comparator<Segment>() {
     @Override
-    public int compare(String s0, String s1) {
+    public int compare(Segment s0, Segment s1) {
       return 0; // TODO
     }
   };

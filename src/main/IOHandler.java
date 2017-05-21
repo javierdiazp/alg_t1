@@ -1,42 +1,41 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class IOHandler {
-  private final String EXT = ".txt";
   private final String SEP = "_";
-  private final String DIV = ",";
+  private final String RUN = "run";
   
-  public void write(List<String> slist, String root, int index) {
-    FileWriter fw = null;
-    BufferedWriter bw = null;
-    String filename = root + SEP + index + EXT;
-    String content = "";
+  public void write(List<Segment> slist, String root, int index) {
+    RandomAccessFile file = null;
+    String filename = root + SEP + index;
+    Segment segment;
     
     try {
-      fw = new FileWriter(filename);
-      bw = new BufferedWriter(fw);
-      for (String s: slist) {
-        content += DIV + s;
+      file = new RandomAccessFile(filename, "rw");
+      for (int i = 0; i < slist.size(); i++) {
+        segment = slist.get(i);
+        if (i != 0) file.writeChar(',');
+        file.writeChar('(');
+        file.writeFloat(segment.getX0());
+        file.writeChar(',');
+        file.writeFloat(segment.getY0());
+        file.writeChar(',');
+        file.writeFloat(segment.getX1());
+        file.writeChar(',');
+        file.writeFloat(segment.getY1());
+        file.writeChar(')');
       }
-      content = content.substring(1);
-      bw.write(content);
     } catch (IOException e){
       e.printStackTrace();
     } finally {
       try {
-        if (bw != null) {
-          bw.close();
-        }
-        if (fw != null) {
-          fw.close();
+        if (file != null) {
+          file.close();
         }
       } catch (IOException e2) {
         e2.printStackTrace();
@@ -44,35 +43,58 @@ public class IOHandler {
     } 
   }
   
-  public List<String> read(String root, int index) {
-    List<String> ans = new ArrayList<String>();
-    FileReader fr = null;
-    BufferedReader br = null;
-    String filename = root + SEP + index + EXT;
+  public List<Segment> read(String root, int index) {
+    List<Segment> ans = new ArrayList<Segment>();
+    RandomAccessFile file = null;
+    String filename = root + SEP + index;
+    float x0, y0, x1, y1;
     
     try {
-      fr = new FileReader(filename);
-      br = new BufferedReader(fr);
-      ans = Arrays.asList(br.readLine().split(",\\("));
-      for (int i = 1; i < ans.size(); i++) {
-        ans.set(i, "(" + ans.get(i));
+      file = new RandomAccessFile(filename, "r");
+      file.seek(0);
+      while (true) {
+        file.readChar();
+        x0 = file.readFloat();
+        file.readChar();
+        y0 = file.readFloat();
+        file.readChar();
+        x1 = file.readFloat();
+        file.readChar();
+        y1 = file.readFloat();
+        file.readChar();
+        ans.add(new Segment(x0, y0, x1, y1));
+        file.readChar();
       }
-      for (String s: ans) {
-        System.out.println(s);
-      }
-      
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (EOFException e) {
+    } catch (IOException e2) {
+      e2.printStackTrace();
+      return null;
     } finally {
       try {
-        if (br != null)
-          br.close();
-        if (fr != null)
-          fr.close();
-      } catch (IOException e2) {
-        e2.printStackTrace();
+        if (file != null)
+          file.close();;
+      } catch (IOException e3) {
+        e3.printStackTrace();
       }
     }
     return ans;
+  }
+  
+  public void multipleWrite(List<Segment> slist, String root, int index, long B) {
+    long currsize = 0;
+    int init = 0;
+    int j = 0;
+    int k = 0;
+    
+    while (k < slist.size()) {
+      while (currsize < B && k < slist.size()) {
+        currsize++;
+        k++;
+      }
+      write(slist.subList(init, k), root + SEP + RUN + index, j);
+      init = k;
+      currsize = 0;
+      j++;
+    }
   }
 }

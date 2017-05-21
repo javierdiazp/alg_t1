@@ -1,55 +1,56 @@
 package main;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Test {
-  public static void main(String[] args) throws IOException {
-    Random rnd = new Random();
-    String root = "input";
-    String ext = ".txt";
-    int n = 20;
+  public static void main(String[] args) {
+    testMergeSort();
+    //testIO();
+  }
+
+  //@SuppressWarnings("unused")
+  private static void testMergeSort() {
+    // create input
+    int N = (int) Math.pow(2, 14);
+    long B = 4096/Segment.SIZE;
+    String root = "test";
+    IOHandler handler = new IOHandler();
     
-    int x0, y0, x1, y1;
-    String str;
+    int i = 0, j = 0;
+    long currsize = 0;
+    while (i < N) {
+      List<Segment> slist = new ArrayList<Segment>();
+      while (currsize < B && i < N) {
+        slist.add(new Segment(0,1,1,2));
+        currsize++;
+        i++;
+      }
+      handler.write(slist, root, j);
+      currsize = 0;
+      j++;
+    }
+    
+    // test mergesort
+    Sorter sorter = new Sorter(root, N, 'x');
+    sorter.mergeSort();
+  }
+  
+  @SuppressWarnings("unused")
+  private static void testIO() {
+    int n = 146;
+    List<Segment> slist = new ArrayList<Segment>();
+    IOHandler handler = new IOHandler();
     
     for (int i = 0; i < n; i++) {
-      System.out.println("Processing " + i);
-      FileWriter fw = new FileWriter(root+i+ext);
-      BufferedWriter bw = new BufferedWriter(fw);
-      
-      x0 = rnd.nextInt(10);
-      y0 = rnd.nextInt(10);
-      x1 = rnd.nextInt(10);
-      y1 = rnd.nextInt(10);
-      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
-      bw.write(str);
-      
-      bw.write(",");
-      
-      x0 = rnd.nextInt(10);
-      y0 = rnd.nextInt(10);
-      x1 = rnd.nextInt(10);
-      y1 = rnd.nextInt(10);
-      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
-      bw.write(str);
-      
-      bw.write(",");
-      
-      x0 = rnd.nextInt(10);
-      y0 = rnd.nextInt(10);
-      x1 = rnd.nextInt(10);
-      y1 = rnd.nextInt(10);
-      str = String.format("(%d,%d,%d,%d)", x0, y0, x1, y1);
-      bw.write(str);
-      
-      bw.close();
-      fw.close();
+      slist.add(new Segment(0,1,1,2));
     }
-    Sorter st = new Sorter(root, 60, 'x');
-    st.mergeSort();
-    System.out.println("Done!");
+    
+    handler.write(slist, "test", 0);
+    
+    List<Segment> ans = handler.read("test", 0);
+    for (Segment s: ans) {
+      System.out.println(s.toString());
+    }
   }
 }
