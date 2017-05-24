@@ -3,16 +3,11 @@ package main;
 public class Segment {
   public static final int SIZE = 28;
   
-  private float x0;
-  private float y0;
-  private float x1;
-  private float y1;
+  private float x0, y0, x1, y1;
   
   public Segment(float x0, float y0, float x1, float y1) {
-    this.setX0(x0);
-    this.setY0(y0);
-    this.setX1(x1);
-    this.setY1(y1);
+    this.setX0(x0); this.setY0(y0);
+    this.setX1(x1); this.setY1(y1);
   }
   
   public float getX0() {
@@ -46,7 +41,15 @@ public class Segment {
     this.y1 = y1;
   }
   
+  public boolean isVertical() {
+    return x0 == x1;
+  }
+  
+  public boolean isHorizontal() {
+    return y0 == y1;
+  }
+  
   public String toString() {
-    return String.format("(%f,%f,%f,%f)", getX0(), getY0(), getX1(), getY1());
+    return String.format("(%f, %f, %f, %f)", getX0(), getY0(), getX1(), getY1());
   }
 }

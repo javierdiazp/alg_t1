@@ -16,6 +16,7 @@ public class IOHandler {
     
     try {
       file = new RandomAccessFile(filename, "rw");
+      file.setLength(0);
       for (int i = 0; i < slist.size(); i++) {
         segment = slist.get(i);
         if (i != 0) file.writeChar(',');
@@ -66,7 +67,6 @@ public class IOHandler {
       }
     } catch (EOFException e) {
     } catch (IOException e2) {
-      e2.printStackTrace();
       return null;
     } finally {
       try {
@@ -79,7 +79,9 @@ public class IOHandler {
     return ans;
   }
   
-  public void multipleWrite(List<Segment> slist, String root, int index, int B) {
+  public int multipleWrite(List<Segment> slist, String root, int B) {
+    /* Return number of IO operations */
+    int operations = 0;
     int currsize = 0;
     int init = 0;
     int j = 0;
@@ -90,10 +92,12 @@ public class IOHandler {
         currsize++;
         k++;
       }
-      write(slist.subList(init, k), root + SEP + index, j);
+      write(slist.subList(init, k), root, j);
+      operations++;
       init = k;
       currsize = 0;
       j++;
     }
+    return operations;
   }
 }
